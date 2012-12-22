@@ -72,7 +72,7 @@ module Mongoid
       def with_eager_loading(document)
         selecting do
           return nil unless document
-          doc = Factory.from_db(klass, document, criteria.object_id)
+          doc = Factory.from_map_or_db(klass, document, criteria.object_id)
           eager_load([ doc ]) if eager_loadable?
           doc
         end

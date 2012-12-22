@@ -36,11 +36,20 @@ module Mongoid
     # @return [ Document ] The instantiated document.
     def from_db(klass, attributes = nil, criteria_instance_id = nil)
       type = (attributes || {})["_type"]
-      if type.blank?
-        klass.instantiate(attributes, criteria_instance_id)
-      else
-        type.camelize.constantize.instantiate(attributes, criteria_instance_id)
-      end
+      
+      klass = type.blank? ? klass : type.camelize.constantize
+      
+      klass.instantiate(attributes, criteria_instance_id)
+    end
+    
+    
+    def from_map_or_db(klass, attributes = nil, criteria_instance_id = nil)
+      type = (attributes || {})["_type"]
+      id = (attributes || {})["_id"]
+      
+      klass = type.blank? ? klass : type.camelize.constantize
+      result = IdentityMap.get(klass, id)
+      result ||= klass.instantiate(attributes, criteria_instance_id)
     end
   end
 end
